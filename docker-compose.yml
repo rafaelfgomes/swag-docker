@@ -10,7 +10,8 @@ services:
       - TZ=${TIMEZONE}
       - URL=${DOMAIN_URL}
       - SUBDOMAINS${SWAG_SUBDOMAINS}
-      - VALIDATION=${SWAG_DNS_VALIDATION}
+      - VALIDATION=${SWAG_VALIDATION_TYPE}
+      - DNSPLUGIN=${SWAG_DNSPLUGIN}
     volumes:
       - config:/config
     ports:
