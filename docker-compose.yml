@@ -12,6 +12,7 @@ services:
       - SUBDOMAINS${SWAG_SUBDOMAINS}
       - VALIDATION=${SWAG_VALIDATION_TYPE}
       - DNSPLUGIN=${SWAG_DNSPLUGIN}
+      - ONLY_SUBDOMAINS=false
     volumes:
       - config:/config
     ports:
