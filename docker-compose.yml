@@ -14,17 +14,13 @@ services:
       - DNSPLUGIN=${SWAG_DNSPLUGIN}
       - ONLY_SUBDOMAINS=false
     volumes:
-      - config:/config
+      - ${SWAG_CONFIG_FOLDER:-./config}:/config
     ports:
       - ${HTTPS_PORT:-443}:443
       - ${HTTP_PORT:-80}:80
     restart: unless-stopped
     networks:
       - net
-
-volumes:
-  config:
-    name: swag-config
 
 include:
   - path: ${NETWORK_CONFIG_FILE}
