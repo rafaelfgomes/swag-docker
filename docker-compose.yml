@@ -7,7 +7,7 @@ services:
       # Instala as coleções de regras do Nginx e vulnerabilidades web comuns
       - COLLECTIONS=${CROWDSEC_COLLECTIONS}
     volumes:
-      - ./configs/acquis.yml:/etc/crowdsec/acquis.yml
+      - ./configs/acquis.yaml:/etc/crowdsec/acquis.yaml
       - ./crowdsec:/var/lib/crowdsec/data
       - ./swag/log/nginx:/var/log/nginx:ro
     restart: unless-stopped
