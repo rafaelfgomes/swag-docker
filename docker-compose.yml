@@ -28,6 +28,7 @@ services:
       - CERTPROVIDER=letsencrypt
       - VALIDATION=dns
       - DNSPLUGIN=${SWAG_DNSPLUGIN}
+      - EMAIL=${EMAIL}
       - FAIL2BAN=false
       - DOCKER_MODS=linuxserver/mods:swag-crowdsec
       - CROWDSEC_LAPI_URL=http://crowdsec:8080
