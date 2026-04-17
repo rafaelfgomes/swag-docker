@@ -1,23 +1,50 @@
 services:
+  crowdsec:
+    image: crowdsecurity/crowdsec
+    container_name: crowdsec
+    environment:
+      - GID=${PGID:-1000}
+      # Instala as coleções de regras do Nginx e vulnerabilidades web comuns
+      - COLLECTIONS=${CROWDSEC_COLLECTIONS}
+    volumes:
+      - ./configs/acquis.yml:/etc/crowdsec/acquis.yml
+      - ./crowdsec:/var/lib/crowdsec/data
+      - ./swag/log/nginx:/var/log/nginx:ro
+    restart: unless-stopped
+    networks:
+      local:
+
   swag:
     image: lscr.io/linuxserver/swag
     container_name: swag
     cap_add:
       - NET_ADMIN
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TIMEZONE}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TIMEZONE::-Etc/UTC}
       - URL=${DOMAIN_URL}
-      - SUBDOMAINS=${SWAG_SUBDOMAINS}
-      - VALIDATION=${SWAG_VALIDATION_TYPE}
+      - SUBDOMAINS=wildcard
+      - CERTPROVIDER=letsencrypt
+      - VALIDATION=dns
       - DNSPLUGIN=${SWAG_DNSPLUGIN}
-      - ONLY_SUBDOMAINS=false
+      - FAIL2BAN=false
+      - DOCKER_MODS=linuxserver/mods:swag-crowdsec
+      - CROWDSEC_LAPI_URL=http://crowdsec:8080
+      - CROWDSEC_API_KEY=${BOUNCER_KEY}
     volumes:
-      - ${SWAG_CONFIG_FOLDER:-./config}:/config
+      - ./swag:/config
     restart: unless-stopped
+    depends_on:
+      - crowdsec
+    ports:
+      - '80:80'
+      - '443:443'
+      - '2082:80'
+      - '8443:443'
     networks:
-      net:
+      local:
 
 networks:
-  net: {}
+  local:
+    name: swag-network
