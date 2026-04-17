@@ -22,7 +22,7 @@ services:
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
-      - TZ=${TIMEZONE::-Etc/UTC}
+      - TZ=${TIMEZONE:-Etc/UTC}
       - URL=${DOMAIN_URL}
       - SUBDOMAINS=wildcard
       - CERTPROVIDER=letsencrypt
