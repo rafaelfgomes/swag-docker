@@ -46,6 +46,19 @@ services:
     networks:
       local:
 
+  crowdsec-webui:
+    image: ghcr.io/theduffman85/crowdsec-web-ui
+    container_name: crowdsec-webui
+    environment:
+      - CROWDSEC_URL=http://crowdsec:8080
+      - CROWDSEC_USER=crowdsec-web-ui
+      - CROWDSEC_PASSWORD=${CROWDSEC_WEBUI_PASSWORD}
+    volumes:
+      - ${CROWDSEC_WEBUI_DATA_FOLDER:-./data}:/app/data
+    restart: unless-stopped
+    ports:
+      - "${CROWDSEC_WEBUI_PORT:-3000}:3000"
+
 networks:
   local:
     name: swag-network
