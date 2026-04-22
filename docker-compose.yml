@@ -8,8 +8,8 @@ services:
       - COLLECTIONS=${CROWDSEC_COLLECTIONS}
     volumes:
       - ./configs/acquis.yaml:/etc/crowdsec/acquis.yaml
-      - ./crowdsec:/var/lib/crowdsec/data
-      - ./swag/log/nginx:/var/log/nginx:ro
+      - ${CROWDSEC_DATA_FOLDER:-./crowdsec}:/var/lib/crowdsec/data
+      - ${SWAG_CONFIG_FOLDER:-./swag}/log/nginx:/var/log/nginx:ro
     restart: unless-stopped
     networks:
       local:
@@ -32,9 +32,9 @@ services:
       - FAIL2BAN=false
       - DOCKER_MODS=linuxserver/mods:swag-crowdsec
       - CROWDSEC_LAPI_URL=http://crowdsec:8080
-      - CROWDSEC_API_KEY=${BOUNCER_KEY}
+      - CROWDSEC_API_KEY=${BOUNCER_KEY:-bouncer_key}
     volumes:
-      - ./swag:/config
+      - ${SWAG_CONFIG_FOLDER:-./swag}:/config
     restart: unless-stopped
     depends_on:
       - crowdsec
@@ -51,13 +51,17 @@ services:
     container_name: crowdsec-webui
     environment:
       - CROWDSEC_URL=http://crowdsec:8080
-      - CROWDSEC_USER=crowdsec-web-ui
+      - CROWDSEC_USER=admin
       - CROWDSEC_PASSWORD=${CROWDSEC_WEBUI_PASSWORD}
     volumes:
       - ${CROWDSEC_WEBUI_DATA_FOLDER:-./data}:/app/data
     restart: unless-stopped
+    depends_on:
+      - crowdsec
     ports:
       - "${CROWDSEC_WEBUI_PORT:-3000}:3000"
+    networks:
+      local:
 
 networks:
   local:
