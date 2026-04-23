@@ -51,7 +51,7 @@ services:
     container_name: crowdsec-webui
     environment:
       - CROWDSEC_URL=http://crowdsec:8080
-      - CROWDSEC_USER=admin
+      - CROWDSEC_USER=crowdsec-web-ui
       - CROWDSEC_PASSWORD=${CROWDSEC_WEBUI_PASSWORD}
     volumes:
       - ./data/crowdsec-webui:/app/data
