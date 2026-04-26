@@ -13,6 +13,7 @@ services:
     restart: unless-stopped
     networks:
       local:
+        ipv4_address: 172.18.0.3
 
   swag:
     image: lscr.io/linuxserver/swag
@@ -46,6 +47,7 @@ services:
       - '8443:443/udp'
     networks:
       local:
+        ipv4_address: 172.18.0.2
 
   crowdsec-webui:
     image: ghcr.io/theduffman85/crowdsec-web-ui
@@ -63,7 +65,11 @@ services:
       - '3000:3000'
     networks:
       local:
+        ipv4_address: 172.18.0.4
 
 networks:
   local:
     name: swag-network
+    ipam:
+      config:
+        - subnet: 172.18.0.0/24
