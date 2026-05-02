@@ -14,8 +14,6 @@ services:
     networks:
       local:
         ipv4_address: 172.${SUBNET_NUMBER}.0.3
-      external:
-        ipv4_address: ${CROWDSEC_IP}
 
   swag:
     image: lscr.io/linuxserver/swag
@@ -35,7 +33,7 @@ services:
       - FAIL2BAN=false
       - DOCKER_MODS=linuxserver/mods:swag-crowdsec
       - CROWDSEC_LAPI_URL=http://crowdsec:8080
-      - CROWDSEC_API_KEY=${BOUNCER_KEY:-bouncer_key}
+      - CROWDSEC_API_KEY=${BOUNCER_KEY}
     volumes:
       - ${SWAG_DATA_FOLDER:-/data/swag}:/config
       - ./configs/default.conf:/config/nginx/site-confs/default.conf:ro
