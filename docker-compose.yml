@@ -38,7 +38,6 @@ services:
       - CROWDSEC_API_KEY=${BOUNCER_KEY}
     volumes:
       - ${SWAG_DATA_FOLDER:-/data/swag}:/config
-      - ./configs/default.conf:/config/nginx/site-confs/default.conf:ro
     restart: unless-stopped
     depends_on:
       - crowdsec
