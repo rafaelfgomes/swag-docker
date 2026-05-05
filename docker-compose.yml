@@ -2,6 +2,8 @@ services:
   crowdsec:
     image: crowdsecurity/crowdsec
     container_name: crowdsec
+    cap_add:
+      - NET_ADMIN
     environment:
       - GID=${PGID:-1000}
       # Instala as coleções de regras do Nginx e vulnerabilidades web comuns
@@ -40,11 +42,14 @@ services:
     restart: unless-stopped
     depends_on:
       - crowdsec
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2082:80"
+      - "8443:443"
     networks:
       local:
         ipv4_address: 172.${SUBNET_NUMBER}.0.2
-      external:
-        ipv4_address: ${SWAG_IP}
 
   crowdsec-webui:
     image: ghcr.io/theduffman85/crowdsec-web-ui
@@ -58,11 +63,11 @@ services:
     restart: unless-stopped
     depends_on:
       - crowdsec
+    ports:
+      - "81:3000"
     networks:
       local:
         ipv4_address: 172.${SUBNET_NUMBER}.0.4
-      external:
-        ipv4_address: ${CROWDSEC_WEBUI_IP}
 
 networks:
   local:
@@ -70,6 +75,3 @@ networks:
     ipam:
       config:
         - subnet: 172.${SUBNET_NUMBER}.0.0/16
-  external:
-    external: true
-    name: ${EXTERNAL_NETWORK_NAME}
