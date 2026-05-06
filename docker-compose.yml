@@ -36,6 +36,9 @@ services:
       - DOCKER_MODS=linuxserver/mods:swag-crowdsec
       - CROWDSEC_LAPI_URL=http://crowdsec:8080
       - CROWDSEC_API_KEY=${BOUNCER_KEY}
+      - CROWDSEC_CAPTCHA_PROVIDER=${CROWDSEC_CAPTCHA_PROVIDER}
+      - CROWDSEC_SITE_KEY=${CROWDSEC_CAPTCHA_SITE_KEY}
+      - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
     volumes:
       - ${SWAG_DATA_FOLDER:-/data/swag}:/config
     restart: unless-stopped
