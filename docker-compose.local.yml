@@ -1,0 +1,79 @@
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec
+    container_name: crowdsec
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - GID=${PGID:-1000}
+      # Instala as coleções de regras do Nginx e vulnerabilidades web comuns
+      - COLLECTIONS=${CROWDSEC_COLLECTIONS}
+    volumes:
+      - ./configs/acquis.yaml:/etc/crowdsec/acquis.yaml
+      - ${CROWDSEC_DATA_FOLDER:-./data/crowdsec}:/var/lib/crowdsec/data
+      - ${SWAG_DATA_FOLDER}/log/nginx:/var/log/nginx:ro
+    restart: unless-stopped
+    networks:
+      local:
+        ipv4_address: 172.${SUBNET_NUMBER}.0.3
+
+  swag:
+    image: lscr.io/linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TIMEZONE:-Etc/UTC}
+      - URL=${DOMAIN_URL}
+      - SUBDOMAINS=wildcard
+      - CERTPROVIDER=letsencrypt
+      - VALIDATION=dns
+      - DNSPLUGIN=${SWAG_DNSPLUGIN}
+      - EMAIL=${EMAIL}
+      - FAIL2BAN=false
+      - DOCKER_MODS=linuxserver/mods:swag-crowdsec
+      - CROWDSEC_LAPI_URL=http://crowdsec:8080
+      - CROWDSEC_API_KEY=${BOUNCER_KEY}
+      - CROWDSEC_CAPTCHA_PROVIDER=${CROWDSEC_CAPTCHA_PROVIDER}
+      - CROWDSEC_SITE_KEY=${CROWDSEC_CAPTCHA_SITE_KEY}
+      - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
+    volumes:
+      - ${SWAG_DATA_FOLDER:-/data/swag}:/config
+    restart: unless-stopped
+    depends_on:
+      - crowdsec
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2082:80"
+      - "8443:443"
+    networks:
+      local:
+        ipv4_address: 172.${SUBNET_NUMBER}.0.2
+
+  crowdsec-webui:
+    image: ghcr.io/theduffman85/crowdsec-web-ui
+    container_name: crowdsec-webui
+    environment:
+      - CROWDSEC_URL=http://crowdsec:8080
+      - CROWDSEC_USER=crowdsec-web-ui
+      - CROWDSEC_PASSWORD=${CROWDSEC_WEBUI_PASSWORD}
+    volumes:
+      - ${CROWDSEC_WEBUI_DATA_FOLDER:-./data/crowdsec-webui}:/app/data
+    restart: unless-stopped
+    depends_on:
+      - crowdsec
+    ports:
+      - "81:3000"
+    networks:
+      local:
+        ipv4_address: 172.${SUBNET_NUMBER}.0.4
+
+networks:
+  local:
+    name: swag-local-network
+    ipam:
+      config:
+        - subnet: 172.${SUBNET_NUMBER}.0.0/16
