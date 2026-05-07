@@ -14,8 +14,8 @@ services:
       - ${SWAG_DATA_FOLDER}/log/nginx:/var/log/nginx:ro
     restart: unless-stopped
     networks:
-      local:
-        ipv4_address: 172.${SUBNET_NUMBER}.0.3
+      external:
+        ipv4_address: ${CROWDSEC_IP}
 
   swag:
     image: lscr.io/linuxserver/swag
@@ -34,30 +34,26 @@ services:
       - EMAIL=${EMAIL}
       - FAIL2BAN=false
       - DOCKER_MODS=linuxserver/mods:swag-crowdsec
-      - CROWDSEC_LAPI_URL=http://crowdsec:8080
+      - CROWDSEC_LAPI_URL=http://${CROWDSEC_IP}:8080
       - CROWDSEC_API_KEY=${BOUNCER_KEY}
       - CROWDSEC_CAPTCHA_PROVIDER=${CROWDSEC_CAPTCHA_PROVIDER}
       - CROWDSEC_SITE_KEY=${CROWDSEC_CAPTCHA_SITE_KEY}
       - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
     volumes:
       - ${SWAG_DATA_FOLDER:-/data/swag}:/config
+      - ./configs/nginx/default.conf:/config/nginx/site-confs/default.conf:ro
     restart: unless-stopped
     depends_on:
       - crowdsec
-    ports:
-      - "80:80"
-      - "443:443"
-      - "2082:80"
-      - "8443:443"
     networks:
-      local:
-        ipv4_address: 172.${SUBNET_NUMBER}.0.2
+      external:
+        ipv4_address: ${SWAG_IP}
 
   crowdsec-webui:
     image: ghcr.io/theduffman85/crowdsec-web-ui
     container_name: crowdsec-webui
     environment:
-      - CROWDSEC_URL=http://crowdsec:8080
+      - CROWDSEC_URL=http://${CROWDSEC_IP}:8080
       - CROWDSEC_USER=crowdsec-web-ui
       - CROWDSEC_PASSWORD=${CROWDSEC_WEBUI_PASSWORD}
     volumes:
@@ -65,15 +61,10 @@ services:
     restart: unless-stopped
     depends_on:
       - crowdsec
-    ports:
-      - "81:3000"
     networks:
-      local:
-        ipv4_address: 172.${SUBNET_NUMBER}.0.4
+      external:
+        ipv4_address: ${CROWDSEC_WEBUI_IP}
 
 networks:
-  local:
-    name: swag-local-network
-    ipam:
-      config:
-        - subnet: 172.${SUBNET_NUMBER}.0.0/16
+  external:
+    name: ${EXTERNAL_NETWORK_NAME}
