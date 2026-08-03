@@ -13,7 +13,7 @@ services:
       - ENROLL_KEY=${CROWDSEC_ENROLL_KEY}
       - ENROLL_INSTANCE_NAME="Swag"
       - ${CROWDSEC_DATA_FOLDER:-./data/crowdsec}:/var/lib/crowdsec/data
-      - ${SWAG_DATA_FOLDER}/log/nginx:/var/log/nginx:ro
+      - ${SWAG_DATA_FOLDER:-./data/swag}/log/nginx:/var/log/nginx:ro
     restart: unless-stopped
     networks:
       local:
@@ -42,7 +42,7 @@ services:
       - CROWDSEC_SITE_KEY=${CROWDSEC_CAPTCHA_SITE_KEY}
       - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
     volumes:
-      - ${SWAG_DATA_FOLDER:-/data/swag}:/config
+      - ${SWAG_DATA_FOLDER:-./data/swag}:/config
     restart: unless-stopped
     depends_on:
       - crowdsec
@@ -55,23 +55,23 @@ services:
       local:
         ipv4_address: 172.${SUBNET_NUMBER}.0.2
 
-  crowdsec-webui:
-    image: ghcr.io/theduffman85/crowdsec-web-ui
-    container_name: crowdsec-webui
-    environment:
-      - CROWDSEC_URL=http://crowdsec:8080
-      - CROWDSEC_USER=crowdsec-web-ui
-      - CROWDSEC_PASSWORD=${CROWDSEC_WEBUI_PASSWORD}
-    volumes:
-      - ${CROWDSEC_WEBUI_DATA_FOLDER:-./data/crowdsec-webui}:/app/data
-    restart: unless-stopped
-    depends_on:
-      - crowdsec
-    ports:
-      - "81:3000"
-    networks:
-      local:
-        ipv4_address: 172.${SUBNET_NUMBER}.0.4
+  # crowdsec-webui:
+  #   image: ghcr.io/theduffman85/crowdsec-web-ui
+  #   container_name: crowdsec-webui
+  #   environment:
+  #     - CROWDSEC_URL=http://crowdsec:8080
+  #     - CROWDSEC_USER=crowdsec-web-ui
+  #     - CROWDSEC_PASSWORD=${CROWDSEC_WEBUI_PASSWORD}
+  #   volumes:
+  #     - ${CROWDSEC_WEBUI_DATA_FOLDER:-./data/crowdsec-webui}:/app/data
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - crowdsec
+  #   ports:
+  #     - "81:3000"
+  #   networks:
+  #     local:
+  #       ipv4_address: 172.${SUBNET_NUMBER}.0.4
 
 networks:
   local:
