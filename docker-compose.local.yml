@@ -41,8 +41,11 @@ services:
       - CROWDSEC_CAPTCHA_PROVIDER=${CROWDSEC_CAPTCHA_PROVIDER}
       - CROWDSEC_SITE_KEY=${CROWDSEC_CAPTCHA_SITE_KEY}
       - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
+      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
     volumes:
       - ${SWAG_DATA_FOLDER:-./data/swag}:/config
+      - ./configs/nginx/default.conf:/config/nginx/site-confs/default.conf:ro
+      - ./configs/cloudflare.ini:/config/dns-conf/cloudflare.ini:ro
     restart: unless-stopped
     depends_on:
       - crowdsec
