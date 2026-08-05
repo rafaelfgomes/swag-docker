@@ -11,7 +11,7 @@ services:
     volumes:
       - ./configs/acquis.yaml:/etc/crowdsec/acquis.yaml
       - ENROLL_KEY=${CROWDSEC_ENROLL_KEY}
-      - ENROLL_INSTANCE_NAME="Swag"
+      - ENROLL_INSTANCE_NAME=Swag
       - ${CROWDSEC_DATA_FOLDER:-./data/crowdsec}:/var/lib/crowdsec/data
       - ${SWAG_DATA_FOLDER:-./data/swag}/log/nginx:/var/log/nginx:ro
     restart: unless-stopped

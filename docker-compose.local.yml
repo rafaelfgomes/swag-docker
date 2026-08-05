@@ -9,7 +9,7 @@ services:
       # Instala as coleções de regras do Nginx e vulnerabilidades web comuns
       - COLLECTIONS=${CROWDSEC_COLLECTIONS}
       - ENROLL_KEY=${CROWDSEC_ENROLL_KEY}
-      - ENROLL_INSTANCE_NAME="Swag"
+      - ENROLL_INSTANCE_NAME=Swag
     volumes:
       - ./configs/acquis.yaml:/etc/crowdsec/acquis.yaml
       - ${CROWDSEC_DATA_FOLDER:-./data/crowdsec}:/var/lib/crowdsec/data
