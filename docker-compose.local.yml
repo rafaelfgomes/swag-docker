@@ -45,8 +45,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "2082:80"
-      - "8443:443"
     networks:
       local:
         ipv4_address: 172.${SUBNET_NUMBER}.0.2
