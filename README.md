@@ -1,3 +1,3 @@
-# swag-docker
+# SWAG
 
-Reverse Proxy
+Reverse Proxy with NGINX

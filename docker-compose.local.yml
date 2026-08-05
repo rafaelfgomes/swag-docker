@@ -8,10 +8,7 @@ services:
       - GID=${PGID:-1000}
       # Instala as coleções de regras do Nginx e vulnerabilidades web comuns
       - COLLECTIONS=${CROWDSEC_COLLECTIONS}
-      - ENROLL_KEY=${CROWDSEC_ENROLL_KEY}
-      - ENROLL_INSTANCE_NAME=Swag
     volumes:
-      - ./configs/acquis.yaml:/etc/crowdsec/acquis.yaml
       - ${CROWDSEC_DATA_FOLDER:-./data/crowdsec}:/var/lib/crowdsec/data
       - ${SWAG_DATA_FOLDER:-./data/swag}/log/nginx:/var/log/nginx:ro
     restart: unless-stopped
@@ -37,14 +34,10 @@ services:
       - FAIL2BAN=false
       - DOCKER_MODS=linuxserver/mods:swag-crowdsec
       - CROWDSEC_LAPI_URL=http://crowdsec:8080
-      - CROWDSEC_API_KEY=${BOUNCER_KEY}
       - CROWDSEC_CAPTCHA_PROVIDER=${CROWDSEC_CAPTCHA_PROVIDER}
       - CROWDSEC_SITE_KEY=${CROWDSEC_CAPTCHA_SITE_KEY}
       - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
-      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
     volumes:
-      - ./configs/nginx/default.conf:/config/nginx/site-confs/default.conf:ro
-      - ./configs/cloudflare.ini:/config/dns-conf/cloudflare.ini:ro
       - ${SWAG_DATA_FOLDER:-./data/swag}:/config
     restart: unless-stopped
     depends_on:
