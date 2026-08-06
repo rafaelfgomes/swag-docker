@@ -12,7 +12,7 @@ services:
     volumes:
       - ${CROWDSEC_DATA_FOLDER:-./data/crowdsec}:/var/lib/crowdsec/data
       - ${SWAG_DATA_FOLDER:-./data/swag}/log/nginx:/var/log/nginx:ro
-    restart: unless-stopped
+    restart: always
     ports:
       - "8080:8080"
     networks:
@@ -43,7 +43,7 @@ services:
       - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
     volumes:
       - ${SWAG_DATA_FOLDER:-./data/swag}:/config
-    restart: unless-stopped
+    restart: always
     depends_on:
       - crowdsec
     ports:
