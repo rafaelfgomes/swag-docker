@@ -9,9 +9,11 @@ services:
       # Instala as coleções de regras do Nginx e vulnerabilidades web comuns
       - COLLECTIONS=${CROWDSEC_COLLECTIONS}
       - TZ=${TIMEZONE:-Etc/UTC}
+      - CUSTOM_HOSTNAME=crowdsec-swag
     volumes:
-      - ${CROWDSEC_DATA_FOLDER:-./data/crowdsec}:/var/lib/crowdsec/data
-      - ${SWAG_DATA_FOLDER:-./data/swag}/log/nginx:/var/log/nginx:ro
+      - ${CROWDSEC_DATA_FOLDER:-./container_data/crowdsec/data}:/var/lib/crowdsec/data
+      - ${CROWDSEC_CONFIG_FOLDER:-./container_data/crowdsec/config}:/etc/crowdsec
+      - ${SWAG_CONFIG_FOLDER:-./container_data/swag/config}/log/nginx:/var/log/nginx:ro
     restart: always
     networks:
       external:
@@ -40,7 +42,7 @@ services:
       - CROWDSEC_SITE_KEY=${CROWDSEC_CAPTCHA_SITE_KEY}
       - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
     volumes:
-      - ${SWAG_DATA_FOLDER:-./data/swag}:/config
+      - ${SWAG_CONFIG_FOLDER:-./container_data/swag/config}:/config
     restart: always
     depends_on:
       - crowdsec
