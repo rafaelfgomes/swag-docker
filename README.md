@@ -1,3 +1,3 @@
-# SWAG
+# SWAG + CrowdSec
 
-Reverse Proxy with NGINX
+Reverse Proxy with NGINX and security with CrowdSec
