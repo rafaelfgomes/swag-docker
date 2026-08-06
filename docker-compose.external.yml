@@ -8,6 +8,7 @@ services:
       - GID=${PGID:-1000}
       # Instala as coleções de regras do Nginx e vulnerabilidades web comuns
       - COLLECTIONS=${CROWDSEC_COLLECTIONS}
+      - TZ=${TIMEZONE:-Etc/UTC}
     volumes:
       - ${CROWDSEC_DATA_FOLDER:-./data/crowdsec}:/var/lib/crowdsec/data
       - ${SWAG_DATA_FOLDER:-./data/swag}/log/nginx:/var/log/nginx:ro

@@ -8,10 +8,13 @@ services:
       - GID=${PGID:-1000}
       # Instala as coleções de regras do Nginx e vulnerabilidades web comuns
       - COLLECTIONS=${CROWDSEC_COLLECTIONS}
+      - TZ=${TIMEZONE:-Etc/UTC}
     volumes:
       - ${CROWDSEC_DATA_FOLDER:-./data/crowdsec}:/var/lib/crowdsec/data
       - ${SWAG_DATA_FOLDER:-./data/swag}/log/nginx:/var/log/nginx:ro
     restart: unless-stopped
+    ports:
+      - "8080:8080"
     networks:
       local:
         ipv4_address: 172.${SUBNET_NUMBER}.0.3
