@@ -10,18 +10,19 @@ services:
       - COLLECTIONS=${CROWDSEC_COLLECTIONS}
       - TZ=${TIMEZONE:-Etc/UTC}
       - CUSTOM_HOSTNAME=crowdsec-swag
+      - BOUNCER_KEY_cs-swag-bouncer=${BOUNCER_KEY}
+      - ENROLL_KEY=${ENROLL_KEY}
+      - ENROLL_INSTANCE_NAME=Swag
     volumes:
       - ${CROWDSEC_DATA_FOLDER:-./container_data/crowdsec/data}:/var/lib/crowdsec/data:rw
       - ${CROWDSEC_CONFIG_FOLDER:-./container_data/crowdsec/config}:/etc/crowdsec:rw
       - ${SWAG_CONFIG_FOLDER:-./container_data/swag/config}/log/nginx:/var/log/nginx:ro
     restart: always
-    ports:
-      - "8080:8080"
     security_opt:
       - no-new-privileges=true
     networks:
       local:
-        ipv4_address: 172.${SUBNET_NUMBER}.0.3
+        ipv4_address: 172.${SUBNET_NUMBER:-20}.0.3
 
   swag:
     image: lscr.io/linuxserver/swag
@@ -46,7 +47,7 @@ services:
       - CROWDSEC_SITE_KEY=${CROWDSEC_CAPTCHA_SITE_KEY}
       - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
     volumes:
-      - ${SWAG_CONFIG_FOLDER:-./container_data/swag/config}:/config
+      - ${SWAG_CONFIG_FOLDER:-./container_data/swag/config}:/config:rw
     restart: always
     depends_on:
       - crowdsec
@@ -55,11 +56,11 @@ services:
       - "443:443"
     networks:
       local:
-        ipv4_address: 172.${SUBNET_NUMBER}.0.2
+        ipv4_address: 172.${SUBNET_NUMBER:-20}.0.2
 
 networks:
   local:
     name: swag-local-network
     ipam:
       config:
-        - subnet: 172.${SUBNET_NUMBER}.0.0/16
+        - subnet: 172.${SUBNET_NUMBER:-20}.0.0/16

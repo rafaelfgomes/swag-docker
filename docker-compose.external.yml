@@ -10,6 +10,9 @@ services:
       - COLLECTIONS=${CROWDSEC_COLLECTIONS}
       - TZ=${TIMEZONE:-Etc/UTC}
       - CUSTOM_HOSTNAME=crowdsec-swag
+      - BOUNCER_KEY_cs-swag-bouncer=${BOUNCER_KEY}
+      - ENROLL_KEY=${ENROLL_KEY}
+      - ENROLL_INSTANCE_NAME=Swag
     volumes:
       - ${CROWDSEC_DATA_FOLDER:-./container_data/crowdsec/data}:/var/lib/crowdsec/data
       - ${CROWDSEC_CONFIG_FOLDER:-./container_data/crowdsec/config}:/etc/crowdsec
