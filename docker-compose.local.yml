@@ -69,6 +69,8 @@ services:
       - ${SYNCTHING_CONFIG_FOLDER:-./syncthing/config}:/config
       - ${APPS_BASE_FOLDER:-./appdata}:/data
     restart: always
+    ports:
+      - "8384:8384"
     networks:
       local:
         ipv4_address: 172.${SUBNET_NUMBER:-20}.0.4
