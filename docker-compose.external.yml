@@ -53,6 +53,21 @@ services:
       external:
         ipv4_address: ${SWAG_IP}
 
+  backup:
+    image: lscr.io/linuxserver/syncthing
+    container_name: syncthing-swag-backup
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TIMEZONE:-Etc/UTC}
+    volumes:
+      - ${SYNCTHING_CONFIG_FOLDER:-./syncthing/config}:/config
+      - ${APPS_BASE_FOLDER:-./appdata}:/data
+    restart: always
+    networks:
+      external:
+        ipv4_address: ${SYNCTHING_IP}
+
 networks:
   external:
     external: true
