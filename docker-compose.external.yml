@@ -14,13 +14,13 @@ services:
       - ENROLL_KEY=${ENROLL_KEY}
       - ENROLL_INSTANCE_NAME=Swag
     volumes:
-      - ${CROWDSEC_DATA_FOLDER:-./container_data/crowdsec/data}:/var/lib/crowdsec/data
-      - ${CROWDSEC_CONFIG_FOLDER:-./container_data/crowdsec/config}:/etc/crowdsec
-      - ${SWAG_CONFIG_FOLDER:-./container_data/swag/config}/log/nginx:/var/log/nginx:ro
+      - ${CROWDSEC_DATA_FOLDER:-./crowdsec/data}:/var/lib/crowdsec/data
+      - ${CROWDSEC_CONFIG_FOLDER:-./crowdsec/config}:/etc/crowdsec
+      - ${SWAG_CONFIG_FOLDER:-./swag/config}/log/nginx:/var/log/nginx:ro
     restart: always
     networks:
-      external:
-        ipv4_address: ${CROWDSEC_IP}
+      local:
+        ipv4_address: 172.${SUBNET_NUMBER:-20}.0.3
 
   swag:
     image: lscr.io/linuxserver/swag
@@ -39,36 +39,28 @@ services:
       - EMAIL=${EMAIL}
       - FAIL2BAN=false
       - DOCKER_MODS=linuxserver/mods:swag-crowdsec
-      - CROWDSEC_LAPI_URL=http://${CROWDSEC_IP}:8080
+      - CROWDSEC_LAPI_URL=http://crowdsec:8080
       - CROWDSEC_API_KEY=${BOUNCER_KEY}
       - CROWDSEC_CAPTCHA_PROVIDER=${CROWDSEC_CAPTCHA_PROVIDER}
       - CROWDSEC_SITE_KEY=${CROWDSEC_CAPTCHA_SITE_KEY}
       - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
     volumes:
-      - ${SWAG_CONFIG_FOLDER:-./container_data/swag/config}:/config
+      - ${SWAG_CONFIG_FOLDER:-./swag/config}:/config
     restart: always
     depends_on:
       - crowdsec
     networks:
       external:
         ipv4_address: ${SWAG_IP}
-
-  backup:
-    image: lscr.io/linuxserver/syncthing
-    container_name: syncthing-backups
-    environment:
-      - PUID=${PUID:-1000}
-      - PGID=${PGID:-1000}
-      - TZ=${TIMEZONE:-Etc/UTC}
-    volumes:
-      - ${SYNCTHING_CONFIG_FOLDER:-./syncthing/config}:/config
-      - ${APPS_BASE_FOLDER:-./appdata}:/data
-    restart: always
-    networks:
-      external:
-        ipv4_address: ${SYNCTHING_IP}
+      local:
+        ipv4_address: 172.${SUBNET_NUMBER:-20}.0.2
 
 networks:
   external:
     external: true
     name: ${EXTERNAL_NETWORK_NAME}
+  local:
+    name: swag-local-network
+    ipam:
+      config:
+        - subnet: 172.${SUBNET_NUMBER:-20}.0.0/16

@@ -14,9 +14,9 @@ services:
       - ENROLL_KEY=${ENROLL_KEY}
       - ENROLL_INSTANCE_NAME=Swag
     volumes:
-      - ${APPS_BASE_FOLDER:-./appdata}${CROWDSEC_DATA_FOLDER:-/crowdsec/data}:/var/lib/crowdsec/data:rw
-      - ${APPS_BASE_FOLDER:-./appdata}${CROWDSEC_CONFIG_FOLDER:-/crowdsec/config}:/etc/crowdsec:rw
-      - ${APPS_BASE_FOLDER:-./appdata}${SWAG_CONFIG_FOLDER:-/swag/config}/log/nginx:/var/log/nginx:ro
+      - ${CROWDSEC_DATA_FOLDER:-./crowdsec/data}:/var/lib/crowdsec/data:rw
+      - ${CROWDSEC_CONFIG_FOLDER:-./crowdsec/config}:/etc/crowdsec:rw
+      - ${SWAG_CONFIG_FOLDER:-./swag/config}/log/nginx:/var/log/nginx:ro
     restart: always
     security_opt:
       - no-new-privileges=true
@@ -47,7 +47,7 @@ services:
       - CROWDSEC_SITE_KEY=${CROWDSEC_CAPTCHA_SITE_KEY}
       - CROWDSEC_SECRET_KEY=${CROWDSEC_CAPTCHA_SECRET_KEY}
     volumes:
-      - ${APPS_BASE_FOLDER:-./appdata}${SWAG_CONFIG_FOLDER:-/swag/config}:/config:rw
+      - ${SWAG_CONFIG_FOLDER:-./swag/config}:/config:rw
     restart: always
     depends_on:
       - crowdsec
@@ -57,23 +57,6 @@ services:
     networks:
       local:
         ipv4_address: 172.${SUBNET_NUMBER:-20}.0.2
-
-  backup:
-    image: lscr.io/linuxserver/syncthing
-    container_name: backup-sync
-    environment:
-      - PUID=${PUID:-1000}
-      - PGID=${PGID:-1000}
-      - TZ=${TIMEZONE:-Etc/UTC}
-    volumes:
-      - ${SYNCTHING_CONFIG_FOLDER:-./syncthing/config}:/config
-      - ${APPS_BASE_FOLDER:-./appdata}:/data
-    restart: always
-    ports:
-      - "8384:8384"
-    networks:
-      local:
-        ipv4_address: 172.${SUBNET_NUMBER:-20}.0.4
 
 networks:
   local:
