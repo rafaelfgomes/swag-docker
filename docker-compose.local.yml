@@ -58,6 +58,23 @@ services:
       local:
         ipv4_address: 172.${SUBNET_NUMBER:-20}.0.2
 
+  crowdsec-web-ui:
+    image: ghcr.io/theduffman85/crowdsec-web-ui
+    container_name: crowdsec-webui
+    environment:
+      CONFIG_INSTANCE_LAPI_URL: http://crowdsec:8080
+      CONFIG_INSTANCE_LAPI_AUTH_USERNAME: webui
+      CONFIG_INSTANCE_LAPI_AUTH_PASSWORD: ${CROWDSEC_WEBUI_PASSWORD}
+      CONFIG_UI_TIME_ZONE: ${TIMEZONE:-Etc/UTC}
+      CONFIG_UI_DATE_FORMAT: dd/mm/yyyy
+      CONFIG_UI_TIME_FORMAT: 24h
+    volumes:
+      - ${CROWDSEC_WEBUI_DATA_FOLDER:-./data}:/app/data
+    restart: unless-stopped
+    networks:
+      local:
+        ipv4_address: 172.${SUBNET_NUMBER:-20}.0.4
+
 networks:
   local:
     name: swag-local-network
